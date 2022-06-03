@@ -135,7 +135,7 @@ function RunR(code, putchar, getchar, beep, dbglog)
 				break;
 
 			case '%': val = !num; break;
-			// Confusing
+			// _bug in spec: these insns actually work on num, not on val (see hello world)
 			case '$': num = pop(mstack); break;
 			case '&': mstack.push(num); break;
 
