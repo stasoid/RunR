@@ -52,6 +52,9 @@ catch(error) {
 function RunR(code, putchar, getchar, beep, dbglog)
 {
 	code = code.split('\n');
+	// remove \r in case of \r\n
+	code.forEach((line,i) => line.at(-1)=='\r'?code[i]=line.slice(0,-1):0);
+
 	let pos = find_start(code) || {x: 0, y: 0};
 	let dir = {dx: 1, dy: 0};
 	let stack = [];
@@ -59,6 +62,7 @@ function RunR(code, putchar, getchar, beep, dbglog)
 	let num = 0; // current number
 	// the program S3TO prints \3, which suggests that "current value" is not the same as "current number"
 	let val = false; // current value
+	let width = code.reduce((result,line)=>Math.max(result,line.length),0); // width of longest line
 	
 	function find_start(code)
 	{
@@ -71,7 +75,9 @@ function RunR(code, putchar, getchar, beep, dbglog)
 
 	function get(pos)
 	{
-		return code[pos.y] ? code[pos.y][pos.x] : undefined;
+		if(!(pos.y >= 0 && pos.y < code.length)) return null;
+		if(!(pos.x >= 0 && pos.x < width)) return null;
+		return code[pos.y][pos.x] ?? ' ';
 	}
 
 	function pop(stack)
@@ -111,8 +117,8 @@ function RunR(code, putchar, getchar, beep, dbglog)
 			case '~': // I didn't notice any delay in the original interp, so it is noop here.
 				break;
 
-			case 'F':       return;
-			case undefined: return; // ran over the edge of grid
+			case 'F':  return;
+			case null: return; // ran over the edge of grid
 
 			case 'I': num = clip(getchar().charCodeAt(0)); break;
 			case 'O': putchar(String.fromCharCode(num)); break;
