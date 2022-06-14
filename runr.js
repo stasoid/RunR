@@ -53,7 +53,8 @@ function RunR(code, putchar, getchar, beep, dbglog)
 {
 	code = code.split('\n');
 	// remove \r in case of \r\n
-	code.forEach((line,i) => line.at(-1)=='\r'?code[i]=line.slice(0,-1):0);
+	code.forEach((line,i) => line.at(-1)=='\r' ? code[i] = line.slice(0,-1) : 0);
+	let width = code.reduce((result,line) => Math.max(result,line.length), 0); // width of longest line
 
 	let pos = find_start(code) || {x: 0, y: 0};
 	let dir = {dx: 1, dy: 0};
@@ -62,7 +63,6 @@ function RunR(code, putchar, getchar, beep, dbglog)
 	let num = 0; // current number
 	// the program S3TO prints \3, which suggests that "current value" is not the same as "current number"
 	let val = false; // current value
-	let width = code.reduce((result,line)=>Math.max(result,line.length),0); // width of longest line
 	
 	function find_start(code)
 	{
